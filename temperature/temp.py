@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import RPIO as GPIO
 import time
 
@@ -46,7 +47,7 @@ def getData(pin):
                     int(dataStr[16:24], 2) + \
                     int(dataStr[24:32], 2);
 
-    check_against &= 0b11111111;
+    check_against &= 0xff;
 
     error_str = "Checksum error: " + checksum + " != " + \
             check_against + " ; Data = " + dataStr;
@@ -67,5 +68,10 @@ def extractRH(dataStr):
     rh_part = dataStr[:16];
     return int(rh_part, 2) / 10;
 
+GPIO.setmode(GPIO.BOARD);
 
+data = getData(3);
+print(extractTemp(data));
+print(extractRH(data));
 
+GPIO.cleanup();
