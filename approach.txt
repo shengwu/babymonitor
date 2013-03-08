@@ -1,0 +1,16 @@
+Options for capturing webcam video in Linux
+===========================================
+
+Video4Linux seems to be the way to do it. 
+My preferred language is Python and there are several options.
+
+First, we can use some of the direct libraries such as:
+- [v4l2 0.2](https://pypi.python.org/pypi/v4l2)
+- [python-video4linux2](https://code.google.com/p/python-video4linux2/)
+
+It's also possible to use V4L2 indirectly through some Python libraries as:
+- SimpleCV
+- OpenCV
+- pygame
+
+To start, I'll use SimpleCV since it seems like the easiest to pick up. 
