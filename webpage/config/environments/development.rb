@@ -22,6 +22,9 @@ Webpage::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  # Add the config.action_mailer.default_url_options
+  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict
 

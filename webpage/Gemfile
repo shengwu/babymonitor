@@ -36,3 +36,9 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'debugger'
+
+# Bootstrap
+gem 'bootstrap-sass'
+
+# Devise - user authentication
+gem 'devise'
