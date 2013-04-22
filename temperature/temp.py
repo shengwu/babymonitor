@@ -68,6 +68,7 @@ def extractRH(dataStr):
     rh_part = dataStr[:16];
     return int(rh_part, 2) / 10;
 
+GPIO.cleanup();
 GPIO.setmode(GPIO.BOARD);
 
 data = getData(3);
