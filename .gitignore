@@ -76,3 +76,6 @@ nosetests.xml
 
 # Swap files
 *.swp
+
+# Django
+local_settings.py
