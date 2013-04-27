@@ -6,8 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'babymonitor.views.home', name='home'),
-    # url(r'^webpage/', include('webpage.foo.urls')),
+    url(r'^monitor/', include('monitor.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

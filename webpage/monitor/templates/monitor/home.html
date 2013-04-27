@@ -1,9 +1,10 @@
+{% load staticfiles %}
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Baby Monitor</title>
-    <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'monitor/bootstrap.min.css'%}">
 </head>
 <body>
     <div class="navbar">
@@ -25,7 +26,7 @@
         <h4>We know. We've been watching.</h4>
       </div>
       <div id="main-stream" class="span8">
-        <img src="static/dr-orwell.png">
+        <img src="{% static 'monitor/dr-orwell.png' %}">
       </div>
     </div>
   </div>
