@@ -1,0 +1,9 @@
+Make sure to install django-socketio!
+
+(If necessary):
+sudo apt-get install python-dev
+sudo apt-get install libevent-dev
+
+sudo pip install -U django-socketio
+
+Codebase at: https://github.com/stephenmcd/django-socketio

@@ -118,6 +118,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+	'django_socketio',
     'monitor',
     'django.contrib.auth',
     'django.contrib.contenttypes',
