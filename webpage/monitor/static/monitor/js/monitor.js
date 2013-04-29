@@ -1,6 +1,6 @@
 $(function() {
 	var socket;
-
+	var channel = 'default-channel';
 	var messaged = function(data) {
 		alert(data.message);
 	}   
@@ -9,12 +9,12 @@ $(function() {
 		socket = new io.Socket();
 		socket.connect();
 		socket.on('connect', function () {
-		    socket.subscribe('my channel');
+		    socket.subscribe(channel);
 		})
 		socket.on('message', messaged);
 	}
     
 	start();
-	socket.send("This is sent from the client upon connection");
+	socket.send(channel);
 
 });
