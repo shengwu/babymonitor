@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Record of your baby's cries</title>
+  <style type="text/css">
+    th + th,
+    td + td {
+      padding-left: 30px;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>Time recorded</th>
+      <th>Length (sec)</th>
+      <th>Volume (dB)</th>
+    </tr>
+    {% for cry in cries %}
+    <tr>
+      <td>{{ cry.time }}</td>
+      <td>{{ cry.length }}</td>
+      <td>{{ cry.volume }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
