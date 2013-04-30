@@ -37,6 +37,30 @@ void dispData(char *data_ptr)
     }
 }
 
+void dispDataSmart(char *data_ptr, int threshold)
+{
+    char lastBit = data_ptr[0];
+    int counter = 0;
+    int limit = 0;
+
+    while (limit < 10000) {
+        if (data_ptr[limit] != lastBit) {
+            if (lastBit == 1) {
+                if (counter > threshold)
+                    printf("1");
+                else
+                    printf("0");
+            }
+            counter = 0;
+            lastBit = data_ptr[limit];
+        }
+        counter++;
+        limit++;
+    }
+
+    printf("\n");
+}
+
 
 int main (void)
 {
@@ -51,7 +75,7 @@ int main (void)
 
     readData(8, data);
 
-    dispData(data);
+    dispDataSmart(data, 10);
 
     return 0;
 }
