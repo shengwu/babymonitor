@@ -1,13 +1,63 @@
+{% load staticfiles %}
+{% load time_formats %}
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Record of your baby's cries</title>
+  <link rel="stylesheet" href="{% static 'monitor/rickshaw.min.css' %}" />
+  <script type="text/javascript" src="{% static 'monitor/js/d3.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'monitor/js/d3.layout.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'monitor/js/rickshaw.min.js' %}"></script>
   <style type="text/css">
+    * {
+      font-family: Helvetica, Arial, sans-serif;
+    }
     th + th,
     td + td {
       padding-left: 30px;
     }
+    #chart,
+    #y_axis {
+      position: relative;
+      display: inline-block;
+      vertical-align: top;
+    }
+    #y_axis {
+      height: 204px;
+    }
+    #x_axis,
+    #x_label {
+      margin-left: 64px;
+    }
+    #x_axis {
+      height: 24px;
+    }
+    #x_label {
+      width: 600px;
+      text-align: center;
+    }
+
+    .rotate {
+      -webkit-transform: rotate(-90deg);
+      -moz-transform: rotate(-90deg);
+      -ms-transform: rotate(-90deg);
+      -o-transform: rotate(-90deg);
+      transform: rotate(-90deg);
+      -webkit-transform-origin: 50% 50%;
+      -moz-transform-origin: 50% 50%;
+      -ms-transform-origin: 50% 50%;
+      -o-transform-origin: 50% 50%;
+      transform-origin: 50% 50%;
+      filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    }
+    #y_label {
+      width: 140px;
+      position: relative;
+      left: -38px;
+      bottom: -98px;
+    }
+
   </style>
 </head>
 <body>
@@ -25,5 +75,58 @@
     </tr>
     {% endfor %}
   </table>
+
+  <h2>Cries by time of day:</h2>
+  <div id="y_label" class="rotate">Length of cry (sec)</div>
+  <div id="y_axis"></div>
+  <div id="chart"></div>
+  <div id="x_axis"></div>
+  <div id="x_label">Time of day (hour)</div>
+
+  <script>
+
+    var data = [
+    {% for cry in cries %}
+    {
+      x: {{ cry.time|time_of_day }},
+      y: {{ cry.length }},
+      volume: {{ cry.volume }},
+      date: "{{ cry.time }}"
+    }
+    {% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+    var graph = new Rickshaw.Graph( {
+      element: document.querySelector("#chart"),
+      renderer: 'scatterplot',
+      stroke: true,
+      height: 200,
+      width: 600,
+      min: 0,
+      max: 3,
+      series: [ {
+        color: 'steelblue',
+        data: data
+      } ]
+    } );
+
+    var y_ticks = new Rickshaw.Graph.Axis.Y({
+      graph: graph,
+      orientation: 'left',
+      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+      element: document.getElementById('y_axis'),
+    });
+
+    var x_ticks = new Rickshaw.Graph.Axis.X({
+      graph: graph,
+      orientation: 'bottom',
+      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+      element: document.getElementById('x_axis'),
+    });
+
+    graph.render();
+
+  </script>
 </body>
 </html>
