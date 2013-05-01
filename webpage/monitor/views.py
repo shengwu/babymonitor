@@ -32,3 +32,6 @@ def alert(request):
 def cries(request):
     return render(request, 'monitor/cries.html', 
             {'cries': Cry.objects.all()})
+
+def options(request):
+    return render(request, 'monitor/options.html', {})

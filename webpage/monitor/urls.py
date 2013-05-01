@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     url(r'^$', 'monitor.views.home', name='home'),
 	url(r'^alert/$', 'monitor.views.alert', name='alert'),
 	url(r'^cries/$', 'monitor.views.cries', name='cries'),
+	url(r'^options/$', 'monitor.views.options', name='options'),
 )

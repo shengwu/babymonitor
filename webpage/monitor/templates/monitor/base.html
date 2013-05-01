@@ -1,0 +1,34 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Baby Monitor</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'monitor/bootstrap.min.css' %}">
+	<script type="text/javascript" src="{% static 'monitor/js/jquery-2.0.0.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/socket.io.js' %}"></script>
+	<script type="text/javascript" src="{% static 'monitor/js/monitor.js' %}"></script>
+</head>
+
+
+<body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Dr. Orwell's Small Human Monitor</a>
+        <ul class="nav">
+          <li class="active"><a href="monitor">Home</a></li>
+          <li><a href="cries">History</a></li>
+          <li><a href="options">Options</a></li>
+          <li><a href="#">More Products</a></li>
+        </ul>
+      </div>
+    </div>
+
+  <div id="content" class="row-fluid offset1">
+    {% block content %}{% endblock %}
+  </div>
+
+</body>
+</html>
+
