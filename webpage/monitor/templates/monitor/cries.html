@@ -1,22 +1,12 @@
+{% extends 'monitor/base.html' %}
 {% load staticfiles %}
 {% load time_formats %}
-<!DOCTYPE HTML>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Record of your baby's cries</title>
+{% block content %}
   <link rel="stylesheet" href="{% static 'monitor/rickshaw.min.css' %}" />
   <script type="text/javascript" src="{% static 'monitor/js/d3.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'monitor/js/d3.layout.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'monitor/js/rickshaw.min.js' %}"></script>
   <style type="text/css">
-    * {
-      font-family: Helvetica, Arial, sans-serif;
-    }
-    th + th,
-    td + td {
-      padding-left: 30px;
-    }
     #chart,
     #y_axis {
       position: relative;
@@ -59,10 +49,10 @@
     }
 
   </style>
-</head>
-<body>
+
+  <div class="span12">
   <h1>We are harvesting your child's soul.</h1>
-  <table>
+  <table class="table table-striped">
     <tr>
       <th>Time recorded</th>
       <th>Length (sec)</th>
@@ -83,6 +73,7 @@
   <div id="chart"></div>
   <div id="x_axis"></div>
   <div id="x_label">Time of day (hour)</div>
+</div>
 
   <script>
 
@@ -97,6 +88,9 @@
     {% if not forloop.last %},{% endif %}
     {% endfor %}
     ];
+    data.sort(function(a, b) {
+      return a.x - b.x;
+    });
 
     var graph = new Rickshaw.Graph( {
       element: document.querySelector("#chart"),
@@ -129,5 +123,4 @@
     graph.render();
 
   </script>
-</body>
-</html>
+{% endblock %}
