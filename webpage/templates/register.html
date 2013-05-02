@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>REGISTRATION</h1>
+{% if error_message %}{{ error_message }}{% endif %}
+</script>
+<form action="{% url 'auth' %}" method="post">
+	{% csrf_token %}
+	Username: <input type="text" name="username">
+	Password: <input type="password" name="password"> 
+	Repeat Password: <input type="password" name="repeat-password">
+	<input type="submit" value="Register">
+</form>
+<a href="{% url 'login_view' %}">You've been here before, havenchya?</a>
+{% endblock %}
