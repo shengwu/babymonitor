@@ -47,5 +47,4 @@ def auth(request):
 				if user.is_active:
 					login(request, user)
 					return home(request)
-			else:
-				return login_view(request, 'Wrong username or password, you jerk.')
+			return login_view(request, 'Wrong username or password, you jerk.')
