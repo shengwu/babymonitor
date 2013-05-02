@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render 
+from django.contrib.auth.decorators import login_required
 from django_socketio import broadcast, NoSocket
 from monitor.models import *
 import random
 
+@login_required
 def home(request):
     try:
         broadcast({"message": "Someone is about to join us"})
@@ -29,9 +31,11 @@ def alert(request):
         (cry.time, cry.length, cry.volume)
     return HttpResponse("We get it. you're crying. wa wa waaa")
 
+@login_required
 def cries(request):
     return render(request, 'monitor/cries.html', 
             {'cries': Cry.objects.all()})
 
+@login_required
 def options(request):
     return render(request, 'monitor/options.html', {})

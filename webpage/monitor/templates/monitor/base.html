@@ -17,9 +17,9 @@
       <div class="navbar-inner">
         <a class="brand" href="#">Dr. Orwell's Small Human Monitor</a>
         <ul class="nav">
-          <li class="active"><a href="/monitor">Home</a></li>
-          <li><a href="/monitor/cries">History</a></li>
-          <li><a href="/monitor/options">Options</a></li>
+          <li class="active"><a href="{% url 'monitor:home' %}">Home</a></li>
+          <li><a href="#">History</a></li>
+          <li><a href="{% url 'monitor:options' %}">Options</a></li>
           <li><a href="#">More Products</a></li>
         </ul>
       </div>
