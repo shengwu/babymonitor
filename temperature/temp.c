@@ -1,13 +1,12 @@
 /*
  * temp.c
- *
  */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <wiringPi.h>
 
-#define BUFFER_SIZE 10000
+#define BUFFER_SIZE 2000
 #define THRESHOLD 10
 #define DATA_SIZE 41
 
@@ -16,9 +15,9 @@ void startSignal(int pin)
 {
     pinMode(pin, OUTPUT);        
     digitalWrite(pin, LOW);
-    delayMicroseconds(1100); // 1.1 ms
+    delay(2); // 2 ms
     digitalWrite(pin, HIGH);
-    delayMicroseconds(35); // range is 20-40 us
+    delayMicroseconds(30); // range is 20-40 us
 }
 
 /*
@@ -95,26 +94,12 @@ int validData(char *data)
 }
 
 
-float getTemp(char *data)
-{
-    int temp = 0;
-
-    int i = 2;
-    for (; i <= 16; i++) {
-        temp <<= 1;
-        temp |= data[i];
-    }
-
-    return (float)(data[1] == 1 ? - temp : temp) / 10;
-}
-
-
 float getHum(char *data)
 {
     int hum = 0;
 
-    int i = 17;
-    for (; i <= 32; i++) {
+    int i = 1;
+    for (; i <= 16; i++) {
         hum <<= 1;
         hum |= data[i];
     }
@@ -123,32 +108,54 @@ float getHum(char *data)
 }
 
 
+float getTemp(char *data)
+{
+    int temp = 0;
+
+    int i = 18;
+    for (; i <= 32; i++) {
+        temp <<= 1;
+        temp |= data[i];
+    }
+
+    return (float)(data[17] == 1 ? - temp : temp) / 10;
+}
+
+
+int getData(char *buffer, char *data) 
+{
+    size_t len = 0;
+
+    while (!(len == DATA_SIZE && validData(data))) {
+        delay(2000); // wait 2 sec before next iteration.
+        startSignal(8);
+        readData(8, buffer);
+        dispData(buffer, BUFFER_SIZE);
+        len = rawToBinary(buffer, data, THRESHOLD);
+        printf("%d\n", len);
+    }
+
+    return len;
+} 
+
+
 int main (void)
 {
-    printf("Raspberry Pi Temp\n") ;
-
+    float temp;
+    float hum;
     char *buffer = malloc(BUFFER_SIZE);
     char *data = malloc(DATA_SIZE);
-    size_t len;
+    unsigned int justRead = 0;
 
     if (wiringPiSetup () == -1)
         return 1;
+    
+    getData(buffer, data);
 
-    do {
-        startSignal(8);
-        readData(8, buffer);
-//    dispData(buffer, BUFFER_SIZE); displays 2-us sample data from buffer
-        len = rawToBinary(buffer, data, THRESHOLD);
-        printf("%d\n", len);
-        delay(2000); // wait 2 sec before next iteration.
-    } while (!(len == DATA_SIZE && validData(data)));
+    temp = getTemp(data);
+    hum = getHum(data);
 
-    dispData(data, len);
-
-    float temp = getTemp(data);
-    float hum = getHum(data);
-
-    printf("temp: %f humidity: %f\n", temp, hum);
+    printf("Temperature: %.1foC\nRelative Humidity: %.1f%%\n", temp, hum);
 
     free(buffer);
     free(data);
