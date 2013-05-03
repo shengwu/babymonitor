@@ -6,8 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-	url(r'^$', 'monitor.views.home', name='home'),
-    url(r'^monitor/', include('monitor.urls', namespace='monitor')),
+    url(r'', include('monitor.urls', namespace='monitor')),
 	url(r'^register', 'webpage.views.register', name='register'),
 	url(r'^login/', 'webpage.views.login_view', name='login_view'),
 	url(r'^auth/', 'webpage.views.auth', name='auth'),

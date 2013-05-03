@@ -121,6 +121,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
 	'django_socketio',
     'monitor',
+    'south',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
