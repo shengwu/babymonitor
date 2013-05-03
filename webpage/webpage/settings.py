@@ -96,7 +96,8 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -121,6 +122,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
 	'django_socketio',
     'monitor',
+    'south',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

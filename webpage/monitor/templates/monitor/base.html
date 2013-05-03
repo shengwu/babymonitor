@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load monitor_tags %}
 <!DOCTYPE HTML>
 <html lang="en">
 
@@ -17,9 +18,9 @@
       <div class="navbar-inner">
         <a class="brand" href="#">Dr. Orwell's Small Human Monitor</a>
         <ul class="nav">
-          <li class="active"><a href="{% url 'monitor:home' %}">Home</a></li>
-          <li><a href="#">History</a></li>
-          <li><a href="{% url 'monitor:options' %}">Options</a></li>
+          <li {{ request.path|is_active:''|safe }}><a href="{% url 'monitor:home' %}">Home</a></li>
+          <li {{ request.path|is_active:'cries'|safe }}><a href="{% url 'monitor:cries' %}">History</a></li>
+          <li {{ request.path|is_active:'options'|safe }}><a href="{% url 'monitor:options' %}">Options</a></li>
           <li><a href="#">More Products</a></li>
         </ul>
       </div>
