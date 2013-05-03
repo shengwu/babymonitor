@@ -2,33 +2,39 @@
 
 {% block content %}
 <h1>REGISTRATION</h1>
+{% if owner %}<h4 style="margin-bottom: 10px;">Welcome, proud owner of Dr. Orwell's Small Human Monitor</h4>{% endif %}
 <a href="{% url 'login_view' %}">You've been here before, havenchya?</a>
-{% if error_message %}{{ error_message }}{% endif %}
 </script>
-<form class="form-horizontal" action="{% url 'auth' %}" method="post">
+<form class="form-horizontal" action="{% url 'register' %}" method="post">
 	{% csrf_token %}
+    <div class="control-group">
+        <div class="controls" style="color: red;">
+            {% if error_message %}{{ error_message }}{% endif %}
+        </div>
+    </div>
+    {% if owner %}<input type="hidden" name="owner" value="{{ owner }}">{% endif %}
     <div class="control-group">
         <label class="control-label" for="input-name">Name</label>
         <div class="controls">
-            <input id="input-name" type="text" name="name" placeholder="Name">
+            <input id="input-name" type="text" name="name" placeholder="First Last">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="input-username">Email</label>
         <div class="controls">
-            <input id="input-username" type="text" name="username" placeholder="Email">
+            <input id="input-username" type="text" name="username" placeholder="name@domain">
         </div>
     </div>
 	<div class="control-group">
         <label class="control-label" for="input-password">Password</label>
         <div class="controls">
-            <input id="input-password" type="password" name="password" placeholder="Password">
+            <input id="input-password" type="password" name="password">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="input-repeat-password">Repeat Password</label>
         <div class="controls">
-            <input id="input-repeat-password" type="password" name="repeat-password" placeholder="Repeat Password">
+            <input id="input-repeat-password" type="password" name="repeat-password">
         </div>
     </div>
     <div class="control-group">

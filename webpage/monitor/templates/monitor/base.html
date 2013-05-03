@@ -16,12 +16,16 @@
 <body>
     <div class="navbar">
       <div class="navbar-inner">
-        <a class="brand" href="#">Dr. Orwell's Small Human Monitor</a>
+          <a class="brand" href="{% url 'monitor:home' %}">Dr. Orwell's Small Human Monitor</a>
         <ul class="nav">
           <li {{ request.path|is_active:''|safe }}><a href="{% url 'monitor:home' %}">Home</a></li>
           <li {{ request.path|is_active:'cries'|safe }}><a href="{% url 'monitor:cries' %}">History</a></li>
           <li {{ request.path|is_active:'options'|safe }}><a href="{% url 'monitor:options' %}">Options</a></li>
           <li><a href="#">More Products</a></li>
+      </ul>
+      <ul class="nav" style="float: right;">
+          <li><a href="{% url 'logout_view' %}">Logout</a></li>
+      </ul>
         </ul>
       </div>
     </div>

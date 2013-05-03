@@ -3,9 +3,13 @@
 {% block content %}
 <h1>LOG IN, ALREADY</h1>
 <a href="{% url 'register' %}">Are you new here?</a>
-{% if error_message %}{{ error_message }}{% endif %}
-<form class="form-horizontal" action="{% url 'auth' %}" method="post">
+<form class="form-horizontal" action="{% url 'login_view' %}" method="post">
 	{% csrf_token %}
+    <div class="control-group">
+        <div class="controls">
+            <div style="color:red;">{% if error_message %}{{ error_message }}{% endif %}</div>
+        </div>
+    </div>
 	<div class="control-group">
 		<label class="control-label" for="input-username">Email</label>
 		<div class="controls">
@@ -15,7 +19,7 @@
     <div class="control-group">
 		<label class="control-label" for="input-password">Password</label>
 		<div class="controls">
-            <input id="input-password" type="text" name="password" placeholder="Password">
+            <input id="input-password" type="password" name="password" placeholder="Password">
         </div>
     </div>
     <div class="control-group">
