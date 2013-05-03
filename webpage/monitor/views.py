@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django_socketio import broadcast, NoSocket
 from monitor.models import *
 import random
@@ -38,4 +39,4 @@ def cries(request):
 
 @login_required
 def options(request):
-    return render(request, 'monitor/options.html', {})
+    return render(request, 'monitor/options.html', {'users': User.objects.all()})

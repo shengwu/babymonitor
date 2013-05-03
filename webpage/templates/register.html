@@ -2,14 +2,39 @@
 
 {% block content %}
 <h1>REGISTRATION</h1>
+<a href="{% url 'login_view' %}">You've been here before, havenchya?</a>
 {% if error_message %}{{ error_message }}{% endif %}
 </script>
-<form action="{% url 'auth' %}" method="post">
+<form class="form-horizontal" action="{% url 'auth' %}" method="post">
 	{% csrf_token %}
-	Username: <input type="text" name="username">
-	Password: <input type="password" name="password"> 
-	Repeat Password: <input type="password" name="repeat-password">
-	<input type="submit" value="Register">
+    <div class="control-group">
+        <label class="control-label" for="input-name">Name</label>
+        <div class="controls">
+            <input id="input-name" type="text" name="name" placeholder="Name">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="input-username">Email</label>
+        <div class="controls">
+            <input id="input-username" type="text" name="username" placeholder="Email">
+        </div>
+    </div>
+	<div class="control-group">
+        <label class="control-label" for="input-password">Password</label>
+        <div class="controls">
+            <input id="input-password" type="password" name="password" placeholder="Password">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="input-repeat-password">Repeat Password</label>
+        <div class="controls">
+            <input id="input-repeat-password" type="password" name="repeat-password" placeholder="Repeat Password">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn">Create User</button>
+        </div>
+    </div>
 </form>
-<a href="{% url 'login_view' %}">You've been here before, havenchya?</a>
 {% endblock %}

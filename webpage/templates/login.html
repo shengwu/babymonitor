@@ -2,13 +2,27 @@
 
 {% block content %}
 <h1>LOG IN, ALREADY</h1>
+<a href="{% url 'register' %}">Are you new here?</a>
 {% if error_message %}{{ error_message }}{% endif %}
-<form action="{% url 'auth' %}" method="post">
+<form class="form-horizontal" action="{% url 'auth' %}" method="post">
 	{% csrf_token %}
-	Username: <input type="text" name="username">
-	Password: <input type="password" name="password"> 
-	<input type="submit" name="submit"  value="Log In">
+	<div class="control-group">
+		<label class="control-label" for="input-username">Email</label>
+		<div class="controls">
+            <input id="input-username" type="text" name="username" placeholder="Email">
+        </div>
+    </div>
+    <div class="control-group">
+		<label class="control-label" for="input-password">Password</label>
+		<div class="controls">
+            <input id="input-password" type="text" name="password" placeholder="Password">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" name="submit" class="btn">Sign in</button>
+        </div>
+    </div>
 </form>
-<a href="{% url 'register' %}">Are you new, here?</a>
 {% endblock %}
 	

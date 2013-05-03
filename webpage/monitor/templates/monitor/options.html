@@ -1,4 +1,8 @@
 {% extends "monitor/base.html" %}
 
-{% block content %}Does this work??{% endblock %}
+{% block content %}
+{% for user in users %}
+	<p>{{ user }}</p>
+{% endfor %}
+{% endblock %}
 
