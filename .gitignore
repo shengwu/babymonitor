@@ -25,6 +25,7 @@
 *.log
 *.sql
 *.sqlite
+*.db
 
 # OS generated files #
 ######################
@@ -79,3 +80,4 @@ nosetests.xml
 
 # Django
 local_settings.py
+
