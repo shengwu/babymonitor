@@ -160,11 +160,7 @@ int main (void)
         fprintf(hum_fp, "%.1f\n", hum);
         fclose(temp_fp);
         fclose(hum_fp);       
-
-
-        printf("Temperature: %.1foC (%.1foF)\nRelative Humidity: %.1f%%\n", temp, temp * 1.8 + 32, hum);
-
-
+//        printf("Temperature: %.1foC (%.1foF)\nRelative Humidity: %.1f%%\n", temp, temp * 1.8 + 32, hum);
     }
 
     free(buffer);
