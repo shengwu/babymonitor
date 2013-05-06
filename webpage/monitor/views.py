@@ -12,7 +12,17 @@ def home(request):
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
         print "Broadcast not sent: No connected sockets."
-    return render(request, 'monitor/home.html', {})
+
+    # Read temperature and humidity
+    with open('/baby/temperature') as f:
+        temp = f.readline().strip()
+    with open('/baby/humidity') as f:
+        humidity = f.readline().strip()
+
+    return render(request, 'monitor/home.html', {
+        'temp': temp,
+        'humidity': humidity
+        })
 
 def alert(request):
     print "Tear alert detected on server."

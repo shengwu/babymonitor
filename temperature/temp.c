@@ -130,9 +130,7 @@ int getData(char *buffer, char *data)
         delay(2000); // wait 2 sec before next iteration.
         startSignal(8);
         readData(8, buffer);
-        dispData(buffer, BUFFER_SIZE);
         len = rawToBinary(buffer, data, THRESHOLD);
-        printf("%d\n", len);
     }
 
     return len;
@@ -145,17 +143,29 @@ int main (void)
     float hum;
     char *buffer = malloc(BUFFER_SIZE);
     char *data = malloc(DATA_SIZE);
-    unsigned int justRead = 0;
+    FILE *temp_fp;
+    FILE *hum_fp;
 
     if (wiringPiSetup () == -1)
         return 1;
-    
-    getData(buffer, data);
+    while(1) {
+        getData(buffer, data);
 
-    temp = getTemp(data);
-    hum = getHum(data);
+        temp = getTemp(data);
+        hum = getHum(data);
 
-    printf("Temperature: %.1foC\nRelative Humidity: %.1f%%\n", temp, hum);
+        temp_fp = fopen("/baby/temperature", "w+");
+        hum_fp = fopen("/baby/humidity", "w+");
+        fprintf(temp_fp, "%.1f\n", temp);
+        fprintf(hum_fp, "%.1f\n", hum);
+        fclose(temp_fp);
+        fclose(hum_fp);       
+
+
+        printf("Temperature: %.1foC (%.1foF)\nRelative Humidity: %.1f%%\n", temp, temp * 1.8 + 32, hum);
+
+
+    }
 
     free(buffer);
     free(data);
