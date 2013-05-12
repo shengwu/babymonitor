@@ -23,3 +23,8 @@ class Sleep(models.Model):
 	time = models.DateTimeField()
 	length = models.FloatField() 
 	interruptions = models.IntegerField(default=0)
+
+class DataPoint(models.Model):
+    time = models.DateTimeField(auto_now_add=True)
+    temp = models.FloatField()
+    humidity = models.FloatField()
