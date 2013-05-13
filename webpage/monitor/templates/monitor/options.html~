@@ -1,0 +1,52 @@
+{% extends "monitor/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h1>Welcome, honored owner</h1>
+<div class="row">
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Activate/Deactivate</th>
+            <th>Delete User</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user }}</td>
+            <td><button id="activate-btn" class="btn">Activate</button></td>
+            <td><div class="delete-div">
+                <div class="username" style="visibility: hidden;">{{ user }}</div>
+                <button class="btn btn-danger delete-btn">Delete</button>
+                <button class="btn btn-inverse confirm-btn" style="visibility: hidden;">Confirm Delete</button>
+            </div></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<script type="text/javascript">
+$('.delete-btn').click(function() {
+        if($(this).html() == "Delete") {
+            $(this).removeClass('btn-danger');
+            $(this).html('Cancel');
+            $(this).siblings('.confirm-btn').css('visibility', 'visible');
+        } else {
+            $(this).addClass('btn-danger');
+            $(this).html('Delete');
+            $(this).siblings('.confirm-btn').css('visibility', 'hidden');
+        }
+});
+
+$('.confirm-btn').click(function() {
+        $.post("{% url 'monitor:modify_user' %}"
+
+});
+</script>
+
+
+{% endblock %}
+

@@ -1,0 +1,77 @@
+{% extends "monitor/base.html" %}
+{% block content %}
+
+<h1>Welcome, honored owner</h1>
+<div class="row">
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Activate/Deactivate</th>
+            <th>Delete User</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr id="{{ user.id }}" class="user {% if user.is_active %}success{% endif %}">
+            <td class="username">{{ user.first_name }} {{ user.last_name }}</td>
+            <td><div><button class="btn activate-btn">
+                    {% if user.is_active %}Deactivate{% else %}Activate{% endif %}</button></div></td>
+            <td><div class="delete-div">
+                <button class="btn btn-danger delete-btn">Delete</button>
+                <button class="btn btn-inverse confirm-btn" style="visibility: hidden;">Confirm Delete</button>
+            </div></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<script type="text/javascript">
+
+    $('.delete-btn').click(function() {
+         if($(this).html() == 'Delete') {
+            $(this).removeClass('btn-danger');
+            $(this).html('Cancel');
+            $(this).siblings('.confirm-btn').css('visibility', 'visible');
+        } else {
+            $(this).addClass('btn-danger');
+            $(this).html('Delete');
+            $(this).siblings('.confirm-btn').css('visibility', 'hidden');
+        }
+    });
+
+    $('.activate-btn').click(function() {
+        var postdata = {
+            'uid': $(this).parents('tr.user').attr('id'),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+        if($(this).html() == 'Activate') {
+            $(this).html('Deactivate');
+            postdata['action'] = 'activate';
+        } else {
+            $(this).html('Activate');
+            postdata['action'] = 'deactivate';
+        }
+        $.post("{% url 'monitor:modify_user' %}", postdata).done(function(data) {
+        });
+    });
+
+    $('.confirm-btn').click(function() {
+        var postdata = {
+            'action': 'delete',
+            'uid': $(this).parents('tr.user').attr('id'),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        $(this).parents('tr').remove();
+
+        $.post("{% url 'monitor:modify_user' %}", postdata).done(function(data) {
+            alert(data);
+        });
+    });
+
+</script>
+
+
+{% endblock %}
+

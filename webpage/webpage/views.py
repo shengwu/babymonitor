@@ -47,6 +47,7 @@ def register(request):
         user.save()
         return render(request, 'login.html', {'error_message': 'Account created for ' + firstname + '. Have the monitor owner activate your account, you horse thief!'})
     else:
+        user.groups.add(Group.objects.get(name='owner'))
         user.save()
         user = authenticate(username=username, password=password) 
         login(request, user)

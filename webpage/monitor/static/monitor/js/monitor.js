@@ -2,7 +2,9 @@ $(function() {
 	var socket;
 	var channel = 'default-channel';
 	var messaged = function(data) {
-		alert(data.message);
+        if(data.message){
+		    alert(data.message);
+        }
 	}   
         
 	var start = function() {
@@ -17,4 +19,7 @@ $(function() {
 	start();
 	socket.send(channel);
 
+
+
 });
+

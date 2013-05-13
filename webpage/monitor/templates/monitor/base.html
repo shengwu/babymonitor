@@ -21,12 +21,12 @@
           <li {{ request.path|is_active:''|safe }}><a href="{% url 'monitor:home' %}">Home</a></li>
           <li {{ request.path|is_active:'cries'|safe }}><a href="{% url 'monitor:cries' %}">History</a></li>
           <li {{ request.path|is_active:'options'|safe }}><a href="{% url 'monitor:options' %}">Options</a></li>
+          <li {{ request.path|is_active:'users'|safe }}><a href="{% url 'monitor:users' %}">Users</a></li>
           <li><a href="#">More Products</a></li>
       </ul>
       <ul class="nav" style="float: right;">
           <li><a href="{% url 'logout_view' %}">Logout</a></li>
       </ul>
-        </ul>
       </div>
     </div>
 

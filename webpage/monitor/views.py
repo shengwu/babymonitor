@@ -48,5 +48,34 @@ def cries(request):
             {'cries': Cry.objects.all()})
 
 @login_required
+def users(request):
+    if request.user.groups.filter(name='owner'):
+        return render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
+    else:
+        return render(request, 'monitor/denied.html', {})
+
+@login_required
 def options(request):
-    return render(request, 'monitor/options.html', {'users': User.objects.all()})
+    if request.user.groups.filter(name='owner'):
+        return render(request, 'monitor/options.html', {})
+    else:
+        return render(request, 'monitor/denied.html', {})
+
+
+    return render(request, 'monitor/denied.html', {})
+
+def modify_user(request):
+    user = User.objects.get(id=request.POST['uid'])
+    name = user.first_name
+    if request.POST['action'] == 'delete':
+        user.delete()
+        return HttpResponse(name + " has been deleted")
+    elif request.POST['action'] == 'activate':
+        user.is_active = True
+        user.save()
+        return HttpResponse(name + " has been activated")
+    elif request.POST['action'] == 'deactivate':
+        user.is_active = False
+        user.save()
+        return HttpResponse(name + " has been deactivated")
+    return HttpResponse("Invalid action")
