@@ -2,7 +2,63 @@
 {% block content %}
 
 <h1>Options</h1>
+<h4>Your configuration is my command</h4>
 
+<form>
+    <fieldset>
+        <legend>Alert Thresholds</legend>
+        <label>Volume</label>
+        <div class="input-prepend input-append">
+            <input class="input-small" type="text" value="20">
+        </div>
+        <label>Max Temperature</label>
+        <div class="input-prepend input-append">
+            <input class="input-small" type="text" value="32"> 
+        </div>
+        <label>Min Temperature</label>
+        <div class="input-prepend input-append">
+            <input class="input-small" type="text" value="12">
+        </div>
+    </fieldset>
+    <fieldset>
+    <legend>Notification Methods</legend>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Alert Window
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                SMS 
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Email 
+        </label> 
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Tweet 
+        </label>
 
+    </fieldset>
+</form>
+
+<script type="text/javascript">
+    $('.input-small').before('<button class="btn down-btn">decrease</button>');
+    $('.input-small').after('<button class="btn up-btn">increase</button>');
+    $('label').css('margin-top', 10);
+    $('.down-btn').click(function() {
+        var val = parseInt($(this).siblings('input').val());
+        val -= 1;
+        $(this).siblings('input').val(val);
+        
+        });
+    $('.up-btn').click(function() {
+        var val = parseInt($(this).siblings('input').val());
+        val += 1;
+        $(this).siblings('input').val(val);
+        
+    });
+
+</script>
 {% endblock %}
 
