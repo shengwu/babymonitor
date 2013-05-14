@@ -9,8 +9,8 @@
         <h4>We know. We've been watching.</h4>
         <p class="lead">Current temperature: <strong>{{ temp }}&deg;C</strong><br>Current humidity: <strong>{{ humidity }}%</strong></p>
       </div>
-      <div id="main-stream" class="span8">
-        <img src="{% static 'monitor/dr-orwell.png' %}">
+      <div class="span8">
+        <iframe style="width: 640px; height: 480px;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
       </div>
     </div>
 {% endblock %}
