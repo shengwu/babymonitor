@@ -7,7 +7,7 @@
       <div id="baby-stats" class="span4">
         <h2>Your brood has been sleeping for 1h 43m</h2>
         <h4>We know. We've been watching.</h4>
-        <p class="lead">Current temperature: <strong>{{ temp }}&deg;C</strong><br>Current humidity: <strong>{{ humidity }}%</strong></p>
+        <p class="lead state-info">Current temperature: <strong><span class="temp">{{ temp }}</span>&deg;C</strong><br>Current humidity: <strong><span class="humidity">{{ humidity }}</span>%</strong></p>
       </div>
       <div class="span8">
         <iframe style="width: 640px; height: 480px;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
@@ -17,4 +17,21 @@
     <audio src="http://{{ ip_address }}:8090/test.mp3" autoplay>
       Your browser does not support the <code>audio</code> element.
     </audio>
+    <script>
+    // Update temperature and humidity each second
+    var interval = 1000;
+    var updateTempAndHumidity = function() {
+        window.setTimeout(updateTempAndHumidity, interval);
+        $.getJSON('http://{{ ip_address }}/humiditytemp', function(data) {
+            $('.temp').text(data.temp);
+            $('.humidity').text(data.humidity);
+
+            $('.state-info').css('background-color', '#ddddff');
+            $('.state-info').animate({
+                backgroundColor: jQuery.Color({ lightness: 1 })
+            }, 400);
+        });
+    }
+    window.setTimeout(updateTempAndHumidity, interval);
+    </script>
 {% endblock %}

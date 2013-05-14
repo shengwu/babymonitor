@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django_socketio import broadcast, NoSocket
 from monitor.models import *
+import json
 import os
 import random
 import socket
@@ -101,3 +102,12 @@ def modify_user(request):
         user.save()
         return HttpResponse(name + " has been deactivated")
     return HttpResponse("Invalid action")
+
+def get_humidity_and_temp(request):
+    # Read temperature and humidity
+    with open('/baby/temperature') as f:
+        temp = f.readline().strip()
+    with open('/baby/humidity') as f:
+        humidity = f.readline().strip()
+    info = {'temp': temp, 'humidity': humidity}
+    return HttpResponse(json.dumps(info), mimetype='application/json')
