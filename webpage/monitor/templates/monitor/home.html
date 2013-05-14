@@ -13,4 +13,8 @@
         <iframe style="width: 640px; height: 480px;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
       </div>
     </div>
+
+    <audio src="http://{{ ip_address }}:8090/test.mp3" autoplay>
+      Your browser does not support the <code>audio</code> element.
+    </audio>
 {% endblock %}
