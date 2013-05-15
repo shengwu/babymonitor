@@ -99,7 +99,11 @@ def modify_baby(request):
         baby.max_temp = value
     elif(field == 'min_temp'):
         baby.min_temp = value
+    elif(field == 'active'):
+        Baby.objects.all().update(is_active = False)
+        baby.is_active = True
     baby.save()
+    return HttpResponse("your baby has been modified")
 
 def modify_user(request):
     user = User.objects.get(id=request.POST['uid'])

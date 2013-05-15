@@ -1,52 +1,109 @@
 {% extends "monitor/base.html" %}
-{% load staticfiles %}
+{% load jsonify %}
 
 {% block content %}
 
-<h1>Welcome, honored owner</h1>
-<div class="row">
-<table class="table">
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Activate/Deactivate</th>
-            <th>Delete User</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for user in users %}
-        <tr>
-            <td>{{ user }}</td>
-            <td><button id="activate-btn" class="btn">Activate</button></td>
-            <td><div class="delete-div">
-                <div class="username" style="visibility: hidden;">{{ user }}</div>
-                <button class="btn btn-danger delete-btn">Delete</button>
-                <button class="btn btn-inverse confirm-btn" style="visibility: hidden;">Confirm Delete</button>
-            </div></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
+<h1>Options</h1>
+<h4>Your configuration is my command</h4>
+
+    <fieldset>
+        <legend>Your Half-Pint</legend>
+        <a href="{% url 'monitor:create_baby' %}"><button class="btn">New Baby</button></a>
+    </fieldset>
+    <fieldset>
+        <legend>Alert Thresholds</legend>
+        <label>Volume</label>
+        <div class="input-prepend input-append">
+            <input id="max_vol" class="input-small" name="max_vol" type="text">
+        </div>
+        <label>Max Temperature</label>
+        <div class="input-prepend input-append">
+            <input id="max_temp" class="input-small" name="max_temp" type="text"> 
+        </div>
+        <label>Min Temperature</label>
+        <div class="input-prepend input-append">
+            <input id="min_temp" class="input-small" name="min_temp" type="text">
+        </div>
+    </fieldset>
+    <fieldset>
+    <legend>Notification Methods</legend>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Alert Window
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                SMS 
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Email 
+        </label> 
+        <label class="checkbox">
+            <input type="checkbox" value="">
+                Tweet 
+        </label>
+
+    </fieldset>
+
 <script type="text/javascript">
-$('.delete-btn').click(function() {
-        if($(this).html() == "Delete") {
-            $(this).removeClass('btn-danger');
-            $(this).html('Cancel');
-            $(this).siblings('.confirm-btn').css('visibility', 'visible');
-        } else {
-            $(this).addClass('btn-danger');
-            $(this).html('Delete');
-            $(this).siblings('.confirm-btn').css('visibility', 'hidden');
+    {% if babies %}
+        var babies = {{ babies|jsonify }};
+    {% endif %}
+
+
+    $('.input-small').before('<button class="btn down-btn">decrease</button>');
+    $('.input-small').after('<button class="btn up-btn">increase</button>');
+    $('label').css('margin-top', 10);
+
+    updateForm();
+
+	$('#baby-select').change(updateForm);
+
+    $('.down-btn').click(function() {
+        var val = parseFloat($(this).siblings('input').val());
+        val -= 1;
+        $(this).siblings('input').val(val);
+        var field = $(this).siblings('input').attr('name');
+        saveData(field, val);
+		babies[activeBaby()]['fields'][field] = val;
+	
+    });
+
+    $('.up-btn').click(function() {
+        var val = parseFloat($(this).siblings('input').val());
+        val += 1;
+        $(this).siblings('input').val(val);
+        var field = $(this).siblings('input').attr('name');
+        saveData(field, val);
+		babies[activeBaby()]['fields'][field] = val;
+
+    });
+
+    $('.input-small').change(function() {
+        var field = $(this).attr('name');
+        var val = $(this).val();
+        saveData(field, val);
+		babies[activeBaby()]['fields'][field] = val;
+    });
+
+    function updateForm() {
+        var baby = activeBaby();
+        $('#max_vol').val(babies[baby]['fields']['max_vol']);
+        $('#max_temp').val(babies[baby]['fields']['max_temp']);
+        $('#min_temp').val(babies[baby]['fields']['min_temp']);
+        saveData('active', '0');
+    }
+
+    function activeBaby() {
+        for(var i=0; i<babies.length; i++) {
+            if(babies[i]['pk'] == $('#baby-select option:selected').text()) {
+				return i;
+            }
         }
-});
+    }
 
-$('.confirm-btn').click(function() {
-        $.post("{% url 'monitor:modify_user' %}"
 
-});
 </script>
-
-
 {% endblock %}
 

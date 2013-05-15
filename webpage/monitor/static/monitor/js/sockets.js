@@ -18,6 +18,4 @@ $(function() {
     
 	start();
 	socket.send(channel);
-
 });
-

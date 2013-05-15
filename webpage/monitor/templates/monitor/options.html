@@ -8,11 +8,6 @@
 
     <fieldset>
         <legend>Your Half-Pint</legend>
-        <select id="baby-select">
-            {% for baby in babies %}
-            <option>{{ baby.name }}</option>
-            {% endfor %}
-        </select>
         <a href="{% url 'monitor:create_baby' %}"><button class="btn">New Baby</button></a>
     </fieldset>
     <fieldset>
@@ -55,12 +50,15 @@
     {% if babies %}
         var babies = {{ babies|jsonify }};
     {% endif %}
-    
-    updateForm();
+
 
     $('.input-small').before('<button class="btn down-btn">decrease</button>');
     $('.input-small').after('<button class="btn up-btn">increase</button>');
     $('label').css('margin-top', 10);
+
+    updateForm();
+
+	$('#baby-select').change(updateForm);
 
     $('.down-btn').click(function() {
         var val = parseFloat($(this).siblings('input').val());
@@ -68,6 +66,8 @@
         $(this).siblings('input').val(val);
         var field = $(this).siblings('input').attr('name');
         saveData(field, val);
+		babies[activeBaby()]['fields'][field] = val;
+	
     });
 
     $('.up-btn').click(function() {
@@ -76,46 +76,33 @@
         $(this).siblings('input').val(val);
         var field = $(this).siblings('input').attr('name');
         saveData(field, val);
-    });
-    
-    $('.input-small').change(function() {
-        var field = $(this).attr('name');
-        var value = $(this).val();
-        saveData(field, value);
+		babies[activeBaby()]['fields'][field] = val;
+
     });
 
-    $('#baby-select').change(updateForm);
-    
+    $('.input-small').change(function() {
+        var field = $(this).attr('name');
+        var val = $(this).val();
+        saveData(field, val);
+		babies[activeBaby()]['fields'][field] = val;
+    });
+
     function updateForm() {
-        var baby = activeBaby();
+        var baby = babies[activeBaby()]['fields'];
         $('#max_vol').val(baby['max_vol']);
         $('#max_temp').val(baby['max_temp']);
         $('#min_temp').val(baby['min_temp']);
-    };
+        saveData('active', '0');
+    }
 
     function activeBaby() {
         for(var i=0; i<babies.length; i++) {
             if(babies[i]['pk'] == $('#baby-select option:selected').text()) {
-                return babies[i]['fields'];
+				return i;
             }
         }
     }
 
-    function saveData(field, value) {
-        var postdata = {
-            'baby_name': $('#baby-select option:selected').text(),
-            'action': 'edit',
-            'field': field,
-            'value': value,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        };
-        
-        $.post("{% url 'monitor:modify_baby' %}", postdata);
-
-        // update for this page
-        var baby = activeBaby();
-        baby[field] = value;
-    } 
 
 </script>
 {% endblock %}
