@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Baby(models.Model):
-    name = models.CharField(max_length=30, default="Baby")
+    name = models.CharField(max_length=30, primary_key=True)
     max_vol = models.FloatField(default=10)
     min_temp = models.FloatField(default=5)
     max_temp = models.FloatField(default=20)

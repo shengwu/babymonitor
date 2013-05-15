@@ -15,6 +15,8 @@ def check_owner(request):
 
 @login_required
 def home(request):
+    if len(Baby.objects.all()) == 0:
+        return render(request, 'monitor/create_baby.html', {})
     try:
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
@@ -82,8 +84,22 @@ def users(request):
 @login_required
 def options(request):
     check_owner(request)
-
+    if(request.POST):
+        baby = Baby(name=request.POST['baby_name'])
+        baby.save()
     return render(request, 'monitor/options.html', {'babies': Baby.objects.all()})
+
+def modify_baby(request):
+    baby = Baby.objects.get(pk=request.POST['baby_name'])
+    value = float(request.POST['value'])
+    field = request.POST['field']
+    if(field == 'max_vol'):
+        baby.max_vol = value 
+    elif(field == 'max_temp'):
+        baby.max_temp = value
+    elif(field == 'min_temp'):
+        baby.min_temp = value
+    baby.save()
 
 def modify_user(request):
     user = User.objects.get(id=request.POST['uid'])

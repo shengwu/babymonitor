@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 	url(r'^options/$', 'monitor.views.options', name='options'),
 	url(r'^humiditytemp/$', 'monitor.views.get_humidity_and_temp', name='get_humidity_and_temp'),
     url(r'^create_baby/$', 'monitor.views.create_baby', name='create_baby'),
+    url(r'^modify_baby/$', 'monitor.views.modify_baby', name='modify_baby'),
 )

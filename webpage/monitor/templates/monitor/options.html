@@ -1,4 +1,6 @@
 {% extends "monitor/base.html" %}
+{% load jsonify %}
+
 {% block content %}
 
 <h1>Options</h1>
@@ -17,15 +19,15 @@
         <legend>Alert Thresholds</legend>
         <label>Volume</label>
         <div class="input-prepend input-append">
-            <input class="input-small" name="max-vol" type="text" value="20">
+            <input id="max_vol" class="input-small" name="max_vol" type="text">
         </div>
         <label>Max Temperature</label>
         <div class="input-prepend input-append">
-            <input class="input-small" name="max-temp" type="text" value="32"> 
+            <input id="max_temp" class="input-small" name="max_temp" type="text"> 
         </div>
         <label>Min Temperature</label>
         <div class="input-prepend input-append">
-            <input class="input-small" name="min-temp" type="text" value="12">
+            <input id="min_temp" class="input-small" name="min_temp" type="text">
         </div>
     </fieldset>
     <fieldset>
@@ -50,38 +52,70 @@
     </fieldset>
 
 <script type="text/javascript">
+    {% if babies %}
+        var babies = {{ babies|jsonify }};
+    {% endif %}
+    
+    updateForm();
+
     $('.input-small').before('<button class="btn down-btn">decrease</button>');
     $('.input-small').after('<button class="btn up-btn">increase</button>');
     $('label').css('margin-top', 10);
+
     $('.down-btn').click(function() {
-        var val = parseInt($(this).siblings('input').val());
+        var val = parseFloat($(this).siblings('input').val());
         val -= 1;
         $(this).siblings('input').val(val);
-        
-        });
-    $('.up-btn').click(function() {
-        var val = parseInt($(this).siblings('input').val());
-        val += 1;
-        $(this).siblings('input').val(val);
-        
+        var field = $(this).siblings('input').attr('name');
+        saveData(field, val);
     });
 
-    $('.input-small').change(updateField);
-    $('.up-btn').click(updateField);
+    $('.up-btn').click(function() {
+        var val = parseFloat($(this).siblings('input').val());
+        val += 1;
+        $(this).siblings('input').val(val);
+        var field = $(this).siblings('input').attr('name');
+        saveData(field, val);
+    });
+    
+    $('.input-small').change(function() {
+        var field = $(this).attr('name');
+        var value = $(this).val();
+        saveData(field, value);
+    });
 
-    var updateField = function() {
-        alert('hi');
-	    var postdata = {
-            'baby_name': $('#baby-select option:selected').text(),
-        //    'field': $(this).attr("name"),
-            'value': $(this).val(),
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        };
-
-        $.post("{% url 'monitor:options' %}", postdata);
-        location.reload();
+    $('#baby-select').change(updateForm);
+    
+    function updateForm() {
+        var baby = activeBaby();
+        $('#max_vol').val(baby['max_vol']);
+        $('#max_temp').val(baby['max_temp']);
+        $('#min_temp').val(baby['min_temp']);
     };
 
+    function activeBaby() {
+        for(var i=0; i<babies.length; i++) {
+            if(babies[i]['pk'] == $('#baby-select option:selected').text()) {
+                return babies[i]['fields'];
+            }
+        }
+    }
+
+    function saveData(field, value) {
+        var postdata = {
+            'baby_name': $('#baby-select option:selected').text(),
+            'action': 'edit',
+            'field': field,
+            'value': value,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+        
+        $.post("{% url 'monitor:modify_baby' %}", postdata);
+
+        // update for this page
+        var baby = activeBaby();
+        baby[field] = value;
+    } 
 
 </script>
 {% endblock %}
