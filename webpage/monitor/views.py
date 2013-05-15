@@ -9,6 +9,10 @@ import os
 import random
 import socket
 
+def check_owner(request):
+    if not request.user.groups.filter(name='owner'):
+        return render(request, 'monitor/denied.html', {})
+
 @login_required
 def home(request):
     try:
@@ -72,20 +76,14 @@ def cries(request):
 
 @login_required
 def users(request):
-    if request.user.groups.filter(name='owner'):
-        return render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
-    else:
-        return render(request, 'monitor/denied.html', {})
+    check_ownwer(request)
+    return render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
 
 @login_required
 def options(request):
-    if request.user.groups.filter(name='owner'):
-        return render(request, 'monitor/options.html', {})
-    else:
-        return render(request, 'monitor/denied.html', {})
+    check_owner(request)
 
-
-    return render(request, 'monitor/denied.html', {})
+    return render(request, 'monitor/options.html', {'babies': Baby.objects.all()})
 
 def modify_user(request):
     user = User.objects.get(id=request.POST['uid'])
@@ -102,6 +100,11 @@ def modify_user(request):
         user.save()
         return HttpResponse(name + " has been deactivated")
     return HttpResponse("Invalid action")
+
+@login_required
+def create_baby(request):
+    check_owner(request)
+    return render(request, 'monitor/create_baby.html', {})
 
 def get_humidity_and_temp(request):
     # Read temperature and humidity

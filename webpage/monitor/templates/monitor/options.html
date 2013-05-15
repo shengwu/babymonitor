@@ -4,20 +4,28 @@
 <h1>Options</h1>
 <h4>Your configuration is my command</h4>
 
-<form>
+    <fieldset>
+        <legend>Your Half-Pint</legend>
+        <select id="baby-select">
+            {% for baby in babies %}
+            <option>{{ baby.name }}</option>
+            {% endfor %}
+        </select>
+        <a href="{% url 'monitor:create_baby' %}"><button class="btn">New Baby</button></a>
+    </fieldset>
     <fieldset>
         <legend>Alert Thresholds</legend>
         <label>Volume</label>
         <div class="input-prepend input-append">
-            <input class="input-small" type="text" value="20">
+            <input class="input-small" name="max-vol" type="text" value="20">
         </div>
         <label>Max Temperature</label>
         <div class="input-prepend input-append">
-            <input class="input-small" type="text" value="32"> 
+            <input class="input-small" name="max-temp" type="text" value="32"> 
         </div>
         <label>Min Temperature</label>
         <div class="input-prepend input-append">
-            <input class="input-small" type="text" value="12">
+            <input class="input-small" name="min-temp" type="text" value="12">
         </div>
     </fieldset>
     <fieldset>
@@ -40,7 +48,6 @@
         </label>
 
     </fieldset>
-</form>
 
 <script type="text/javascript">
     $('.input-small').before('<button class="btn down-btn">decrease</button>');
@@ -58,6 +65,23 @@
         $(this).siblings('input').val(val);
         
     });
+
+    $('.input-small').change(updateField);
+    $('.up-btn').click(updateField);
+
+    var updateField = function() {
+        alert('hi');
+	    var postdata = {
+            'baby_name': $('#baby-select option:selected').text(),
+        //    'field': $(this).attr("name"),
+            'value': $(this).val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        $.post("{% url 'monitor:options' %}", postdata);
+        location.reload();
+    };
+
 
 </script>
 {% endblock %}

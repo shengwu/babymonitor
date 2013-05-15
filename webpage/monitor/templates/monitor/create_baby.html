@@ -1,0 +1,19 @@
+{% extends "monitor/base.html" %}
+
+{% block content %}
+<h1>Create a new baby</h1>
+
+<form action="{% url 'monitor:options' %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Tell us about your small human</legend>
+        <label>Baby Name</label>
+        <input type="text" name="baby_name">
+        <label>Age</label>
+        <input type="text" name="years" placeholder="years">
+        <input type="text" name="months" placeholder="months">
+        <button type="submit" class="btn">Create</button>
+    </fieldset>
+</form>
+
+{% endblock %}
