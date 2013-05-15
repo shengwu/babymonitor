@@ -5,11 +5,12 @@
 
 <h1>Options</h1>
 <h4>Your configuration is my command</h4>
-
     <fieldset>
-        <legend>Your Half-Pint</legend>
+        <legend>Manage Babies</legend>
+        <a href="{% url 'monitor:options' %}"><button id="delete-btn" class="btn btn-danger">Delete This Baby</button></a>
         <a href="{% url 'monitor:create_baby' %}"><button class="btn">New Baby</button></a>
     </fieldset>
+
     <fieldset>
         <legend>Alert Thresholds</legend>
         <label>Volume</label>
@@ -45,7 +46,7 @@
         </label>
 
     </fieldset>
-
+    
 <script type="text/javascript">
     {% if babies %}
         var babies = {{ babies|jsonify }};
@@ -55,7 +56,12 @@
     $('.input-small').before('<button class="btn down-btn">decrease</button>');
     $('.input-small').after('<button class="btn up-btn">increase</button>');
     $('label').css('margin-top', 10);
-
+    $('#delete-btn').text('Delete ' + $('#baby-select option:selected').text());
+    $('#delete-btn').click(function() {
+        if (confirm('Do you want to delete ' + $('#baby-select option:selected').text() + '?')) {
+            saveData('delete', '0');
+        }
+    });
     updateForm();
 
 	$('#baby-select').change(updateForm);
@@ -102,7 +108,6 @@
             }
         }
     }
-
 
 </script>
 {% endblock %}
