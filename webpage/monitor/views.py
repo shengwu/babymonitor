@@ -13,10 +13,15 @@ def check_owner(request):
     if not request.user.groups.filter(name='owner'):
         return render(request, 'monitor/denied.html', {})
 
+def baby_render(request, url, dictionary):
+    dictionary.update({'babies': Baby.objects.all()})
+    if len(Baby.objects.all()) == 0:
+        return create_baby(request)
+    else:
+        return render(request, url, dictionary)
+
 @login_required
 def home(request):
-    if len(Baby.objects.all()) == 0:
-        return render(request, 'monitor/create_baby.html', {})
     try:
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
@@ -47,7 +52,7 @@ def home(request):
             except IOError:
                 pass
 
-    return render(request, 'monitor/home.html', {
+    return baby_render(request, 'monitor/home.html', {
         'temp': temp,
         'humidity': humidity,
         'ip_address': ip,
@@ -73,13 +78,13 @@ def alert(request):
 
 @login_required
 def cries(request):
-    return render(request, 'monitor/cries.html', 
+    return baby_render(request, 'monitor/cries.html', 
             {'cries': Cry.objects.all()})
 
 @login_required
 def users(request):
-    check_ownwer(request)
-    return render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
+    check_owner(request)
+    return baby_render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
 
 @login_required
 def options(request):
@@ -87,7 +92,7 @@ def options(request):
     if(request.POST):
         baby = Baby(name=request.POST['baby_name'])
         baby.save()
-    return render(request, 'monitor/options.html', {'babies': Baby.objects.all()})
+    return baby_render(request, 'monitor/options.html', {})
 
 def modify_baby(request):
     baby = Baby.objects.get(pk=request.POST['baby_name'])
