@@ -14,6 +14,7 @@ def check_owner(request):
         return render(request, 'monitor/denied.html', {})
 
 def baby_render(request, url, dictionary):
+    """Convert into industrial fats by melting down"""
     dictionary.update({'babies': Baby.objects.all()})
     if len(Baby.objects.all()) == 0:
         return create_baby(request)
@@ -108,6 +109,11 @@ def modify_baby(request):
         Baby.objects.all().update(is_active = False)
         baby.is_active = True
     baby.save()
+
+    # Write volume threshold
+    with open('/baby/threshold', 'w') as f:
+        f.write(str(Baby.objects.get(is_active=True).max_vol))
+
     return HttpResponse("your baby has been modified")
 
 def modify_user(request):

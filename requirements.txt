@@ -2,6 +2,7 @@ Django==1.5.1
 PyAudio==0.2.7
 South==0.7.6
 distribute==0.6.36
+django-jsonify==0.2.1
 django-socketio==0.3.6
 gevent==0.13.8
 gevent-socketio==0.2.1
