@@ -14,7 +14,6 @@ def check_owner(request):
         return render(request, 'monitor/denied.html', {})
 
 def baby_render(request, url, dictionary):
-    """Convert into industrial fats by melting down"""
     dictionary.update({'babies': Baby.objects.all()})
     if len(Baby.objects.all()) == 0:
         return create_baby(request)
@@ -59,7 +58,7 @@ def home(request):
         'ip_address': ip,
         })
 
-def alert(request):
+def send_alert():
     print "Tear alert detected on server."
     try:
         broadcast({"message": "Dr. Orwell sayz: YOUR BABY IS PISSED. GO LOVE IT."})
@@ -75,6 +74,9 @@ def alert(request):
     cry.save()
     print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
         (cry.time, cry.length, cry.volume)
+
+def alert(request):
+    send_alert()
     return HttpResponse("We get it. you're crying. wa wa waaa")
 
 @login_required
@@ -144,4 +146,10 @@ def get_humidity_and_temp(request):
     with open('/baby/humidity') as f:
         humidity = f.readline().strip()
     info = {'temp': temp, 'humidity': humidity}
+
+    # Check if baby is crying
+    with open('/baby/crying') as f:
+        if f.read() == 'True':
+            send_alert()
+
     return HttpResponse(json.dumps(info), mimetype='application/json')
