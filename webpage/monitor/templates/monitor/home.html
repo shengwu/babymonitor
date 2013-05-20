@@ -10,7 +10,7 @@
         <p class="lead state-info">Current temperature: <strong><span class="temp">{{ temp }}</span>&deg;C</strong><br>Current humidity: <strong><span class="humidity">{{ humidity }}</span>%</strong></p>
       </div>
       <div class="span8">
-        <iframe style="width: 640px; height: 480px;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
+        <iframe style="width: 640px; height: 480px; border: none;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
       </div>
     </div>
 
@@ -19,7 +19,7 @@
     </audio>
     <script>
     // Update temperature and humidity each second
-    var interval = 1000;
+    var interval = 2000;
     var updateTempAndHumidity = function() {
         window.setTimeout(updateTempAndHumidity, interval);
         $.getJSON('http://{{ ip_address }}/humiditytemp', function(data) {
