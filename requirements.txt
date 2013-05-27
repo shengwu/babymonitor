@@ -8,5 +8,6 @@ gevent==0.13.8
 gevent-socketio==0.2.1
 gevent-websocket==0.3.6
 greenlet==0.4.0
+requests==1.2.3
 sphinx-me==0.1.2
 wsgiref==0.1.2
