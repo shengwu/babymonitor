@@ -29,6 +29,7 @@ while True:
         if digits.match(data):
             payload = {'volume': data}
             requests.post('http://localhost/alert', data=json.dumps(payload))
+            print "Sent cry alert! Volume: %s" % data
 
     counter += 1
     time.sleep(0.5)

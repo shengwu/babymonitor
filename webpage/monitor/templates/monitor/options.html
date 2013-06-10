@@ -64,7 +64,7 @@
     });
     updateForm();
 
-	$('#baby-select').change(updateForm);
+	  $('#baby-select').change(updateForm);
 
     $('.down-btn').click(function() {
         var val = parseFloat($(this).siblings('input').val());
@@ -98,6 +98,7 @@
         $('#max_vol').val(baby['max_vol']);
         $('#max_temp').val(baby['max_temp']);
         $('#min_temp').val(baby['min_temp']);
+        $('#delete-btn').text('Delete ' + $('#baby-select option:selected').text());
         saveData('active', '0');
     }
 

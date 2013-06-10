@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django_socketio import broadcast, NoSocket
 from monitor.models import *
+from .forms import UploadFileForm
 import json
-import os
+import os, subprocess, sys
 import random
 import socket
 
@@ -20,8 +21,23 @@ def baby_render(request, url, dictionary):
     else:
         return render(request, url, dictionary)
 
+def handle_uploaded_file(f):
+    with open('/baby/audio/uploaded.wav', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+    subprocess.Popen(["sudo", "-u", "curt", "cvlc", "/baby/audio/uploaded.wav"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+def play_audio(request):
+    return httpResponse("We played the file")
+
 @login_required
 def home(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print "HANDLING FORM"
+            handle_uploaded_file(request.FILES['file'])
+
     try:
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
@@ -52,13 +68,18 @@ def home(request):
             except IOError:
                 pass
 
+    # Write volume threshold
+    with open('/baby/threshold', 'w') as f:
+        f.write(str(Baby.objects.get(is_active=True).max_vol))
+
     return baby_render(request, 'monitor/home.html', {
         'temp': temp,
         'humidity': humidity,
         'ip_address': ip,
+        'form': UploadFileForm(),
         })
 
-def send_alert():
+def alert(request):
     print "Tear alert detected on server."
     try:
         broadcast({"message": "Dr. Orwell sayz: YOUR BABY IS PISSED. GO LOVE IT."})
@@ -66,17 +87,13 @@ def send_alert():
         print "Broadcast not sent: No connected sockets."
 
     # Record cry
-    # Since they're based on claps, use all same fields for now
-    # In the future, maybe send length/volume parameters in the URL
     cry = Cry()
     cry.length = random.uniform(0.1, 3.0) # in seconds
-    cry.volume = random.uniform(60, 110) # in decibels
+    cry.volume = int(request.POST['volume'])
     cry.save()
     print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
         (cry.time, cry.length, cry.volume)
 
-def alert(request):
-    send_alert()
     return HttpResponse("We get it. you're crying. wa wa waaa")
 
 @login_required
@@ -101,7 +118,12 @@ def modify_baby(request):
     baby = Baby.objects.get(pk=request.POST['baby_name'])
     value = float(request.POST['value'])
     field = request.POST['field']
-    if(field == 'max_vol'):
+    print "Modifying baby with field: " + field
+    if(field == 'delete'):
+        #baby.delete()
+        print "DELETING BABY!!!"
+        return HttpResponse("your baby has been deleted!")
+    elif(field == 'max_vol'):
         baby.max_vol = value 
     elif(field == 'max_temp'):
         baby.max_temp = value
@@ -134,10 +156,14 @@ def modify_user(request):
         return HttpResponse(name + " has been deactivated")
     return HttpResponse("Invalid action")
 
+def play_audio(request):
+    os.system("cvlc /home/curt/test.wav")
+    return HttpResponse("We played your file!")
+
 @login_required
 def create_baby(request):
     check_owner(request)
-    return render(request, 'monitor/create_baby.html', {})
+    return baby_render(request, 'monitor/create_baby.html', {})
 
 def get_humidity_and_temp(request):
     # Read temperature and humidity
@@ -146,10 +172,5 @@ def get_humidity_and_temp(request):
     with open('/baby/humidity') as f:
         humidity = f.readline().strip()
     info = {'temp': temp, 'humidity': humidity}
-
-    # Check if baby is crying
-    with open('/baby/crying') as f:
-        if f.read() == 'True':
-            send_alert()
 
     return HttpResponse(json.dumps(info), mimetype='application/json')

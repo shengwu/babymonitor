@@ -8,7 +8,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 3000
 #define THRESHOLD 10
 #define DATA_SIZE 41
 struct timespec ts1, ts2;
@@ -133,12 +133,16 @@ int getData(char *buffer, char *data)
     readData(8, buffer);
     dispData(buffer, BUFFER_SIZE);
     len = rawToBinary(buffer, data, THRESHOLD);
-    while (!(len == DATA_SIZE && validData(data))) {
+    dispData(data, DATA_SIZE);
+    printf("len: %d\n", len);
+    while (!(len == DATA_SIZE /*&& validData(data)*/ )) {
         delay(2000); // wait 2 sec before next iteration.
         startSignal(8);
         readData(8, buffer);
         dispData(buffer, BUFFER_SIZE);
         len = rawToBinary(buffer, data, THRESHOLD);
+        dispData(data, DATA_SIZE);
+    printf("len: %d\n", len);
     }
 
     return len;

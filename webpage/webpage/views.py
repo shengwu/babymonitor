@@ -58,7 +58,12 @@ def logout_view(request):
     return login_view(request)
 
 def home(request):
-	return render(request, 'monitor/home.html', {})
+    if len(Baby.objects.all()) > 0:
+        return render(request, 'monitor/home.html', {'babies': Baby.objects.all()})
+    else:
+        if not request.user.groups.filter(name='owner'):
+            return render(request, 'monitor/denied.html', {})
+        return render(request, 'monitor/create_baby.html', {})
 
 def register_owner(request):
     logout(request)

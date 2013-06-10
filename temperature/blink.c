@@ -14,12 +14,12 @@ int main (void)
     if (wiringPiSetup () == -1)
         return 1;
 
-    pinMode (0, OUTPUT) ;         // aka BCM_GPIO pin 17
+    pinMode (8, OUTPUT) ;         // aka BCM_GPIO pin 17
 
     for (;;) {
-        digitalWrite (0, 1) ;       // On
+        digitalWrite (8, 1) ;       // On
         delay (500) ;               // mS
-        digitalWrite (0, 0) ;       // Off
+        digitalWrite (8, 0) ;       // Off
         delay (500) ;
     }
 
