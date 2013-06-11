@@ -5,24 +5,85 @@
     <h1 class>Surveillance Home</h1>
     <div class="row-fluid">
       <div id="baby-stats" class="span4">
-        <h2>Your brood has been sleeping for 1h 43m</h2>
-        <h4>We know. We've been watching.</h4>
         <p class="lead state-info">Current temperature: <strong><span class="temp">{{ temp }}</span>&deg;C</strong><br>Current humidity: <strong><span class="humidity">{{ humidity }}</span>%</strong></p>
+
+        <br /><h5>Upload a .wav file to play to your baby!</h5>
+        <br />
+        <form action="{% url 'monitor:home' %}" method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+      {{ form.as_p }}
+          <button type="submit" class="btn">Send!</button>
+          {% if error %}
+          <p style="color: red;">{{ error }}</p>
+          {% endif %}
+        </form>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Audio File</th>
+              <th>Play File</th>
+              <th>Delete File</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for file in files %}
+            <tr id="{{ file }}" class="file">
+              <td class="file-name">{{ file }}</td>
+              <td><div><button class="btn play-btn">Play</button></div></td>
+              <td><div class="delete-file-div">
+                  <button class="btn btn-danger delete-file-btn">Delete</button>
+                  <button class="btn btn-inverse confirm-btn" style="visibility: hidden;">Confirm</button>
+              </div></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          
       </div>
       <div class="span8">
         <iframe style="width: 640px; height: 480px; border: none;" id="main-stream" src="http://{{ ip_address }}:8000/?action=stream"></iframe>
       </div>
     </div>
-    <form action="{% url 'monitor:home' %}" method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
-      <label>Upload an audio file to play to your baby!</label>
-      {{ form.as_p }}
-      <button type="submit" class="btn">Send!</button>
-    </form>
 
     <audio src="http://{{ ip_address }}:8090/test.mp3" autoplay>
       Your browser does not support the <code>audio</code> element.
     </audio>
     <script>
+
+    // Add action listeners to the buttons
+    $('.delete-file-btn').click(function() {
+      if($(this).html() == 'Delete') {
+        $(this).removeClass('btn-danger');
+        $(this).html('Cancel');
+        $(this).siblings('.confirm-btn').css('visibility', 'visible');
+      } else {
+        $(this).addClass('btn-danger');
+        $(this).html('Delete');
+        $(this).siblings('.confirm-btn').css('visibility', 'hidden');
+      }   
+    });
+
+    $('.confirm-btn').click(function() {
+      var postdata = {
+        'action': 'delete',
+        'file': $(this).parents('tr.file').attr('id'),
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+      };
+      $(this).parents('tr').remove();
+      $.post("{% url 'monitor:play_audio' %}", postdata).done(function(data) {
+        alert(data);
+      });
+    });
+
+    $('.play-btn').click(function() {
+      var postdata = {
+        'action': 'play',
+        'file': $(this).parents('tr.file').attr('id'),
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+      };
+      $.post("{% url 'monitor:play_audio' %}", postdata);
+    });
+
     // Update temperature and humidity each second
     var interval = 2000;
     var updateTempAndHumidity = function() {

@@ -21,23 +21,43 @@ def baby_render(request, url, dictionary):
     else:
         return render(request, url, dictionary)
 
-def handle_uploaded_file(f):
-    with open('/baby/audio/uploaded.wav', 'wb+') as destination:
+def handle_uploaded_file(f, name):
+    with open('/baby/audio/' + name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
-    subprocess.Popen(["sudo", "-u", "curt", "cvlc", "/baby/audio/uploaded.wav"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 def play_audio(request):
-    return httpResponse("We played the file")
+    if request.method == 'POST':
+        file = request.POST['file']
+        if request.POST['action'] == 'delete':
+            os.remove('/baby/audio/' + file)
+            return HttpResponse("We deleted /baby/audio/" + file)
+        elif request.POST['action'] == 'play':
+            subprocess.Popen(["sudo", "-u", "curt", "cvlc", "/baby/audio/" + file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            return HttpResponse("We played the file " + file)
+
+    else:
+        return HttpResponse("This needs to be a POST request")
 
 @login_required
 def home(request):
+    error_msg = ""
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            print "HANDLING FORM"
-            handle_uploaded_file(request.FILES['file'])
-
+            if len(os.listdir('/baby/audio/')) > 4:
+                error_msg = "Cannot upload more than 5 files at one time"
+            else:
+                print "uploading audio file"
+                title = request.POST['title']
+                title = title.split('.')[0]
+                title = title + '.wav'
+                if title in os.listdir('/baby/audio/'):
+                    error_msg = "That audio file already exists."
+                else:
+                    handle_uploaded_file(request.FILES['file'], title)
+        else:
+            error_msg = "A field was missing or invalid."
     try:
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
@@ -63,6 +83,7 @@ def home(request):
                         "ath0", "ath1", "ppp0"]
         for ifname in interfaces:
             try:
+
                 ip = get_interface_ip(ifname)
                 break
             except IOError:
@@ -77,6 +98,8 @@ def home(request):
         'humidity': humidity,
         'ip_address': ip,
         'form': UploadFileForm(),
+        'files': os.listdir('/baby/audio/'),
+        'error': error_msg,
         })
 
 def alert(request):
@@ -155,10 +178,6 @@ def modify_user(request):
         user.save()
         return HttpResponse(name + " has been deactivated")
     return HttpResponse("Invalid action")
-
-def play_audio(request):
-    os.system("cvlc /home/curt/test.wav")
-    return HttpResponse("We played your file!")
 
 @login_required
 def create_baby(request):
