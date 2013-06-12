@@ -8,7 +8,7 @@ from monitor.models import *
 from .forms import UploadFileForm
 import json
 import os, subprocess, sys
-import random
+import random, smtplib
 import socket
 
 def check_owner(request):
@@ -111,23 +111,40 @@ def home(request):
         'error': error_msg,
         })
 
+def send_email(toaddrs):
+    fromaddr = 'doktor.orwell@gmail.com'
+    subject = 'Hello from yur friend Dok Orwell!'
+    msg = 'Yo baby is MAD. Go deal with it.\n\nLove,\nDoktor Orwell'
+    header = 'From: ' + fromaddr + '\nTo: ' + toaddrs + '\nSubject: ' + subject + '\n\n'
+    msg = header + msg
+    username = 'doktor.orwell@gmail.com'
+    password = 'babymonitor'
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username, password)
+    server.sendmail(fromaddr, toaddrs, msg)
+    server.quit()
+
+
 @csrf_exempt
 def alert(request):
     if no_babies():
         return create_baby(request)
     print "Tear alert detected on server."
+    send_email(request.user.username)
     try:
         broadcast({"message": "Dr. Orwell sayz: YOUR BABY IS PISSED. GO LOVE IT."})
     except NoSocket:
         print "Broadcast not sent: No connected sockets."
 
-    # Record cry
-    cry = Cry()
-    cry.length = random.uniform(0.1, 3.0) # in seconds
-    cry.volume = int(request.POST['volume'])
-    cry.save()
-    print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
-        (cry.time, cry.length, cry.volume)
+    if request.method == 'POST':
+        # Record cry
+        cry = Cry()
+        cry.length = random.uniform(0.1, 3.0) # in seconds
+        cry.volume = int(request.POST['volume'])
+        cry.save()
+        print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
+            (cry.time, cry.length, cry.volume)
 
     return HttpResponse("We get it. you're crying. wa wa waaa")
 
