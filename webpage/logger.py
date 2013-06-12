@@ -24,12 +24,17 @@ while True:
                 (temp, humidity, str(datetime.now()))
 
     # Check for the baby's cry twice a second
-    with open('/baby/crying') as f:
+    with open('/baby/crying', 'r+') as f:
         data = f.read()
         if digits.match(data):
             payload = {'volume': data}
-            requests.post('http://localhost/alert', data=json.dumps(payload))
+            requests.post('http://129.105.5.89/alert/', data=payload)
             print "Sent cry alert! Volume: %s" % data
+
+            # Overwrite cry value; daemon will write new decibel value
+            # if baby is still crying
+            f.seek(0)
+            f.write('False')
 
     counter += 1
     time.sleep(0.5)

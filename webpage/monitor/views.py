@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from django_socketio import broadcast, NoSocket
 from monitor.models import *
 from .forms import UploadFileForm
@@ -102,6 +103,7 @@ def home(request):
         'error': error_msg,
         })
 
+@csrf_exempt
 def alert(request):
     print "Tear alert detected on server."
     try:
