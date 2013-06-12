@@ -7,7 +7,7 @@
 <h4>Your configuration is my command</h4>
     <fieldset>
         <legend>Manage Babies</legend>
-        <a href="{% url 'monitor:options' %}"><button id="delete-btn" class="btn btn-danger">Delete This Baby</button></a>
+        <button id="delete-btn" class="btn btn-danger">Delete This Baby</button>
         <a href="{% url 'monitor:create_baby' %}"><button class="btn">New Baby</button></a>
     </fieldset>
 
@@ -46,6 +46,7 @@
         </label>
 
     </fieldset>
+    <h5 style="color: red;">Note: only alert window is available at this time.</h5>
     
 <script type="text/javascript">
     {% if babies %}
@@ -60,6 +61,7 @@
     $('#delete-btn').click(function() {
         if (confirm('Do you want to delete ' + $('#baby-select option:selected').text() + '?')) {
             saveData('delete', '0');
+            location.reload();
         }
     });
     updateForm();

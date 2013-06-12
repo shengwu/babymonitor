@@ -22,6 +22,12 @@ def baby_render(request, url, dictionary):
     else:
         return render(request, url, dictionary)
 
+def no_babies():
+    if len(Baby.objects.all()) == 0:
+        return True
+    else:
+        return False
+
 def handle_uploaded_file(f, name):
     with open('/baby/audio/' + name, 'wb+') as destination:
         for chunk in f.chunks():
@@ -42,6 +48,8 @@ def play_audio(request):
 
 @login_required
 def home(request):
+    if no_babies():
+        return create_baby(request)
     error_msg = ""
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -105,6 +113,8 @@ def home(request):
 
 @csrf_exempt
 def alert(request):
+    if no_babies():
+        return create_baby(request)
     print "Tear alert detected on server."
     try:
         broadcast({"message": "Dr. Orwell sayz: YOUR BABY IS PISSED. GO LOVE IT."})
@@ -132,10 +142,12 @@ def users(request):
     return baby_render(request, 'monitor/users.html', {'users': User.objects.all().order_by('-is_active')})
 
 @login_required
+
 def options(request):
     check_owner(request)
     if(request.POST):
         baby = Baby(name=request.POST['baby_name'])
+        baby.is_active = True
         baby.save()
     return baby_render(request, 'monitor/options.html', {})
 
@@ -145,9 +157,11 @@ def modify_baby(request):
     field = request.POST['field']
     print "Modifying baby with field: " + field
     if(field == 'delete'):
-        #baby.delete()
-        print "DELETING BABY!!!"
-        return HttpResponse("your baby has been deleted!")
+        baby.delete()
+        baby = Baby.objects.all()[0]
+        baby.is_active = True
+        baby.save()
+        HttpResponse("We deleted your precious " + request.POST['baby_name'])
     elif(field == 'max_vol'):
         baby.max_vol = value 
     elif(field == 'max_temp'):
@@ -184,7 +198,7 @@ def modify_user(request):
 @login_required
 def create_baby(request):
     check_owner(request)
-    return baby_render(request, 'monitor/create_baby.html', {})
+    return render(request, 'monitor/create_baby.html', {})
 
 def get_humidity_and_temp(request):
     # Read temperature and humidity

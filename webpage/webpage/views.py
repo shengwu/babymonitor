@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from monitor.models import *
+from monitor.views import *
 
 def login_view(request):
     if(request.user.is_authenticated()):
@@ -56,14 +57,6 @@ def register(request):
 def logout_view(request):
     logout(request)
     return login_view(request)
-
-def home(request):
-    if len(Baby.objects.all()) > 0:
-        return render(request, 'monitor/home.html', {'babies': Baby.objects.all()})
-    else:
-        if not request.user.groups.filter(name='owner'):
-            return render(request, 'monitor/denied.html', {})
-        return render(request, 'monitor/create_baby.html', {})
 
 def register_owner(request):
     logout(request)
