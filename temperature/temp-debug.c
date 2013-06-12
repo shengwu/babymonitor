@@ -135,7 +135,7 @@ int getData(char *buffer, char *data)
     len = rawToBinary(buffer, data, THRESHOLD);
     dispData(data, DATA_SIZE);
     printf("len: %d\n", len);
-    while (!(len == DATA_SIZE /*&& validData(data)*/ )) {
+    while (!(len == DATA_SIZE && validData(data))) {
         delay(2000); // wait 2 sec before next iteration.
         startSignal(8);
         readData(8, buffer);

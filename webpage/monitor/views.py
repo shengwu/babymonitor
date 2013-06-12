@@ -40,7 +40,7 @@ def play_audio(request):
             os.remove('/baby/audio/' + file)
             return HttpResponse("We deleted /baby/audio/" + file)
         elif request.POST['action'] == 'play':
-            subprocess.Popen(["sudo", "-u", "curt", "cvlc", "/baby/audio/" + file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subprocess.Popen(["sudo", "-u", "curt", "cvlc", "/baby/audio/" + file, "--play-and-exit"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             return HttpResponse("We played the file " + file)
 
     else:
@@ -53,24 +53,27 @@ def home(request):
     error_msg = ""
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            if len(os.listdir('/baby/audio/')) > 4:
-                error_msg = "Cannot upload more than 5 files at one time"
-            else:
-                print "uploading audio file"
-                title = request.POST['title']
-                title = title.split('.')[0]
-                title = title + '.wav'
-                if title in os.listdir('/baby/audio/'):
-                    error_msg = "That audio file already exists."
+        if 'title' in request.POST:
+            if form.is_valid():
+                if len(os.listdir('/baby/audio/')) > 4:
+                    error_msg = "Cannot upload more than 5 files at one time"
                 else:
-                    handle_uploaded_file(request.FILES['file'], title)
-        else:
-            error_msg = "A field was missing or invalid."
+                    print "uploading audio file"
+                    title = request.POST['title']
+                    title = title.split('.')[0]
+                    title = title + '.wav'
+                    if title in os.listdir('/baby/audio/'):
+                        error_msg = "That audio file already exists."
+                    else:
+                        handle_uploaded_file(request.FILES['file'], title)
+            else:
+                error_msg = "A field was missing or invalid."
+    """
     try:
         broadcast({"message": "Someone is about to join us"})
     except NoSocket:
         print "Broadcast not sent: No connected sockets."
+    """
 
     # Read temperature and humidity
     with open('/baby/temperature') as f:
@@ -132,19 +135,27 @@ def alert(request):
         return create_baby(request)
     print "Tear alert detected on server."
     send_email(request.user.username)
+    print "Email sent to user."
+
     try:
         broadcast({"message": "Dr. Orwell sayz: YOUR BABY IS PISSED. GO LOVE IT."})
     except NoSocket:
         print "Broadcast not sent: No connected sockets."
 
+    # Record cry
+    cry = Cry()
+    cry.length = random.uniform(0.1, 3.0) # in seconds
     if request.method == 'POST':
-        # Record cry
-        cry = Cry()
-        cry.length = random.uniform(0.1, 3.0) # in seconds
-        cry.volume = int(request.POST['volume'])
-        cry.save()
-        print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
-            (cry.time, cry.length, cry.volume)
+        if 'volume' in request.POST:
+            cry.volume = int(request.POST['volume'])
+        else:
+            cry.volume = -1
+    else:
+        cry.volume = -1
+    cry.save()
+
+    print "Cry recorded at %s\nLength: %f\nVolume: %f" % \
+        (cry.time, cry.length, cry.volume)
 
     return HttpResponse("We get it. you're crying. wa wa waaa")
 

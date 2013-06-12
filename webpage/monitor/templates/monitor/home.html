@@ -2,6 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
+<button id="cry-btn" class="btn">Cry</button>
     <h1 class>Surveillance Home</h1>
     <div class="row-fluid">
       <div id="baby-stats" class="span4">
@@ -49,6 +50,13 @@
       Your browser does not support the <code>audio</code> element.
     </audio>
     <script>
+    $('#cry-btn').click(function() {
+      var postdata = {
+        'volume': '12',
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+      };
+      $.post("{% url 'monitor:alert' %}", postdata);
+    });
 
     // Add action listeners to the buttons
     $('.delete-file-btn').click(function() {
